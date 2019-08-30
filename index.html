@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>StringFormat</title>
+  <style>
+    .in_frame>textarea {
+      width: 200px;
+      height: 300px;
+    }
+  </style>
+  <script src="./js/vue.min.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div>
+      <textarea v-model="txtForm" style="width:1000px; height:50px;"></textarea>
+      <input type="button" @click="doSF" value="Format">
+      <input type="button" @click="doSF('\n')" value="Format↵">
+    </div>
+    <div>
+      <div>
+        <input type="button" @click="add" value="+">
+        <input type="button" @click="minus" value="-">
+      </div>
+    </div>
+    <div class="in_frame">
+      <textarea v-for="(item,idx) in arealist" v-model="arealist[idx]"></textarea>
+    </div>
+    <div>
+      <textarea style="width: 1000px; height: 500px;" v-model="txtResult"></textarea>
+    </div>
+  </div>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        txtForm: '',
+        arealist: ['', '', ''],
+        txtResult: ''
+      },
+      computed: {
+        listlen() {
+          let len = (this.arealist.length - 1);
+          while (this.arealist[len] == '') {
+            len--;
+          }
+          return (len + 1);
+        }
+      },
+      methods: {
+        doSF() {
+          if (!this.listlen) return false;
+          this.txtResult = '';
+          let ary = this.arealist.map(e => e.split('\n'));
+          for (let a = 0; a < ary[0].length; a++) {
+            let result = this.txtForm;
+            for (let b = 0; b < this.listlen; b++) {
+              result = result.replace(new RegExp('\\{' + b + '\\}', 'gm'), ary[b][a]);
+            }
+            this.txtResult += result;
+            if (a <= (ary[0].length - 2)) {
+              if (typeof (arguments[0]) === 'string') this.txtResult += arguments[0];
+            }
+          }
+        },
+        add() {
+          if (this.arealist.length >= 3) this.arealist.push('');
+        },
+        minus() {
+          if (this.arealist.length > 3) this.arealist.pop();
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
